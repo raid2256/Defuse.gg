@@ -1,0 +1,8 @@
+{
+  "version": 2,
+  "routes": [
+    { "src": "/api/upload-stats", "dest": "/api/upload-stats.js" },
+    { "src": "/api/get-stats", "dest": "/api/get-stats.js" },
+    { "src": "/(.*)", "dest": "/public/$1" }
+  ]
+}
