@@ -5,7 +5,7 @@ import urllib.error
 import sys
 import time
 
-SERVER_API_URL = "https://your-vercel-app.vercel.app/api/upload-stats"
+SERVER_API_URL = "https://defusegg.vercel.app/api/upload-stats"
 LOCAL_PORT = 3000
 
 last_sent_stats = {}
