@@ -3,142 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DEFUSE.GG — CS2 Global Stat Tracker</title>
+  <title>DEFUSE.GG — CS2 Steam Stat Lookup</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- NAVBAR -->
+  <!-- HEADER NAVBAR -->
   <header class="navbar">
     <div class="nav-container">
       <div class="logo">
         <span class="logo-brand">DEFUSE</span><span class="logo-dot">.GG</span>
       </div>
-      <nav class="nav-links">
-        <button class="nav-tab active" onclick="switchTab('leaderboard')">Leaderboard</button>
-        <button class="nav-tab" onclick="switchTab('setup')">Setup Guide</button>
-      </nav>
-      <div class="nav-auth">
-        <a href="/api/auth-steam?action=login" id="steamBtn" class="steam-btn">
-          <svg class="steam-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2a10 10 0 0 0-10 10c0 4.7 3.2 8.6 7.6 9.7l2.4-3.4a3.5 3.5 0 0 1-.2-1.3c0-.3 0-.6.1-.9l-3.3-2.4a3.5 3.5 0 0 1-2.1.7A3.5 3.5 0 1 1 10 11l2.5 3.3c.3-.1.6-.1.9-.1a3.5 3.5 0 1 1 0 7c-.5 0-1-.1-1.5-.3L9 21.8c.9.1 1.9.2 3 .2a10 10 0 0 0 10-10A10 10 0 0 0 12 2z"/>
-          </svg>
-          Sign in with Steam
-        </a>
-      </div>
+      <span class="badge">STEAM API EDITION</span>
     </div>
   </header>
 
   <main class="container">
 
-    <!-- STEAM LOGGED IN BANNER -->
-    <div id="claimedBanner" class="user-banner" style="display: none;">
-      <div class="user-banner-content">
-        <span class="status-dot"></span>
-        <span>Authenticated as Steam ID: <strong id="userSteamId"></strong></span>
+    <!-- SEARCH HERO -->
+    <section class="hero">
+      <h1>LOOKUP ANY CS2 PLAYER</h1>
+      <p>Enter any public Steam ID or Steam profile link to inspect overall kills, K/D ratio, headshot percentage, and weapon stats.</p>
+      
+      <div class="search-box">
+        <input type="text" id="steamInput" placeholder="Paste SteamID64 or profile URL (e.g. https://steamcommunity.com/id/s1mple)" onkeypress="handleKeyPress(event)">
+        <button class="btn-search" onclick="fetchPlayerStats()">Inspect Player</button>
       </div>
-    </div>
+      <div id="errorMessage" class="error-banner" style="display: none;"></div>
+    </section>
 
-    <!-- TAB 1: LEADERBOARD -->
-    <section id="leaderboard" class="tab-content active">
-      <div class="hero">
-        <div class="hero-badge">OFFICIAL VALVE GSI INTEGRATION</div>
-        <h1>GLOBAL CASUAL STATS</h1>
-        <p>Live CS2 match tracking, headshot analytics, and player stats.</p>
+    <!-- PLAYER PROFILE DASHBOARD (Hidden until searched) -->
+    <section id="dashboard" class="dashboard-grid" style="display: none;">
+      
+      <!-- PROFILE HEADER CARD -->
+      <div class="profile-card">
+        <img id="playerAvatar" src="" alt="Player Avatar" class="player-avatar">
+        <div class="player-info">
+          <h2 id="playerName">Player Name</h2>
+          <p id="steamIdDisplay" class="steam-id">SteamID: -</p>
+          <a id="profileLink" href="#" target="_blank" class="link-external">View Steam Profile ↗</a>
+        </div>
       </div>
 
-      <!-- METRIC CARDS -->
+      <!-- MAIN METRICS -->
       <div class="metrics-grid">
         <div class="metric-card">
-          <span class="metric-label">PLAYERS TRACKED</span>
-          <span class="metric-value" id="totalPlayers">0</span>
+          <span class="metric-label">K/D RATIO</span>
+          <span class="metric-value" id="kdRatio">-</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">HEADSHOT %</span>
+          <span class="metric-value highlight" id="hsPercent">-</span>
         </div>
         <div class="metric-card">
           <span class="metric-label">TOTAL KILLS</span>
-          <span class="metric-value" id="totalKills">0</span>
+          <span class="metric-value" id="totalKills">-</span>
         </div>
         <div class="metric-card">
-          <span class="metric-label">TOP FRAGGER</span>
-          <span class="metric-value highlight" id="topFragger">-</span>
+          <span class="metric-label">TOTAL DEATHS</span>
+          <span class="metric-value" id="totalDeaths">-</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">HOURS PLAYED</span>
+          <span class="metric-value" id="hoursPlayed">-</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-label">TOTAL MVPs</span>
+          <span class="metric-value" id="totalMvps">-</span>
         </div>
       </div>
 
-      <!-- CONTROLS -->
-      <div class="table-bar">
-        <input type="text" id="searchInput" placeholder="Search by player name or Steam ID..." oninput="filterLeaderboard()">
-        <button class="btn-refresh" onclick="fetchLeaderboard()">↻ Sync Live</button>
+      <!-- WEAPON KILLS BREAKDOWN -->
+      <div class="weapons-section">
+        <h3>LIFETIME WEAPON FRAGS</h3>
+        <div id="weaponsGrid" class="weapons-grid"></div>
       </div>
 
-      <!-- TABLE -->
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Rank</th>
-              <th>Player</th>
-              <th>Kills</th>
-              <th>Deaths</th>
-              <th>K/D</th>
-              <th>HS %</th>
-              <th>Score</th>
-              <th>Matches</th>
-            </tr>
-          </thead>
-          <tbody id="leaderboardBody">
-            <tr><td colspan="8" class="loading-state">Fetching global standings...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- TAB 2: SETUP GUIDE -->
-    <section id="setup" class="tab-content">
-      <div class="hero">
-        <h1>HOW TO CONNECT CS2</h1>
-        <p>Uses Valve's built-in Game State Integration. 100% safe, no external background apps required.</p>
-      </div>
-
-      <div class="setup-container">
-        
-        <div class="setup-card">
-          <div class="setup-step">STEP 1</div>
-          <h3>Download Your CS2 Config</h3>
-          <p>Click below to download the official integration config file directly from your browser:</p>
-          <div class="action-row">
-            <button class="btn-primary" onclick="downloadConfigFile()">⬇ Download .cfg File</button>
-            <button class="btn-secondary" onclick="copyConfigCode()">📋 Copy Config Text</button>
-          </div>
-        </div>
-
-        <div class="setup-card">
-          <div class="setup-step">STEP 2</div>
-          <h3>Move File to CS2 Directory</h3>
-          <p>Place <code>gamestate_integration_tracker.cfg</code> into your CS2 configuration folder:</p>
-          <div class="code-box">
-            <code>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\game\csgo\cfg\</code>
-          </div>
-        </div>
-
-        <div class="setup-card">
-          <div class="setup-step">STEP 3</div>
-          <h3>Play & Track</h3>
-          <p>Launch CS2 and play any casual, deathmatch, or non-prime server. Your stats will sync automatically on every round!</p>
-        </div>
-
-      </div>
     </section>
 
   </main>
 
-  <!-- MATCH HISTORY MODAL -->
-  <div id="historyModal" class="modal-backdrop">
-    <div class="modal-box">
-      <button class="modal-close" onclick="closeModal()">&times;</button>
-      <h3 id="modalPlayerName" class="modal-title">Match Snapshots</h3>
-      <div id="modalHistoryContent" class="modal-body"></div>
-    </div>
-  </div>
+  <footer>
+    <p>DEFUSE.GG &copy; 2026 | Powered by Valve Steam Web API</p>
+  </footer>
 
   <script src="app.js"></script>
 </body>
