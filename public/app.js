@@ -12,7 +12,7 @@ async function fetchPlayerStats() {
   errorBanner.style.display = 'none';
 
   if (!query) {
-    showError('Please enter a valid SteamID64 or profile link.');
+    showError('Please enter a valid 17-digit SteamID64.');
     return;
   }
 
@@ -29,39 +29,30 @@ async function fetchPlayerStats() {
     renderDashboard(data.player);
   } catch (err) {
     console.error('Lookup Error:', err);
-    showError('Unable to connect to Steam server.');
+    showError('Unable to connect to the server.');
   }
 }
 
 function renderDashboard(player) {
   const dashboard = document.getElementById('dashboard');
-  const stats = player.stats;
+  const stats = player.stats || {};
 
-  // Render Header
-  document.getElementById('playerAvatar').src = player.avatar;
-  document.getElementById('playerName').textContent = player.personaName;
+  // Profile Header
+  document.getElementById('playerAvatar').src = player.avatar || 'https://avatars.steamstatic.com/fef49e7fa7e1997310d705b2a6158ff8dc1cdfeb_full.jpg';
+  document.getElementById('playerName').textContent = player.personaName || 'Unknown Player';
   document.getElementById('steamIdDisplay').textContent = `SteamID: ${player.steamId}`;
-  document.getElementById('profileLink').href = player.profileUrl;
+  document.getElementById('profileLink').href = player.profileUrl || '#';
 
-  // Render Metrics
+  // Safe Metric Rendering (Handles strings and missing values without crashing)
+  const kdVal = parseFloat(stats.kdRatio) || 1.0;
   const kdElem = document.getElementById('kdRatio');
-  kdElem.textContent = stats.kdRatio;
-  kdElem.style.color = stats.kdRatio >= 1.0 ? 'var(--green)' : 'var(--red)';
+  kdElem.textContent = stats.kdRatio || 'N/A';
+  kdElem.style.color = kdVal >= 1.0 ? 'var(--green)' : 'var(--red)';
 
-  document.getElementById('hsPercent').textContent = `${stats.hsPercent}%`;
-  document.getElementById('totalKills').textContent = stats.kills.toLocaleString();
-  document.getElementById('totalDeaths').textContent = stats.deaths.toLocaleString();
-  document.getElementById('hoursPlayed').textContent = stats.hoursPlayed;
-  document.getElementById('totalMvps').textContent = stats.mvps.toLocaleString();
-
-  // Render Weapon Cards
-  const weaponsGrid = document.getElementById('weaponsGrid');
-  weaponsGrid.innerHTML = stats.weapons.map(w => `
-    <div class="weapon-card">
-      <span class="weapon-name">${w.name}</span>
-      <span class="weapon-kills">${w.kills.toLocaleString()} Kills</span>
-    </div>
-  `).join('');
+  document.getElementById('hsPercent').textContent = stats.hsPercent || 'N/A';
+  document.getElementById('totalKills').textContent = stats.kills || 'N/A';
+  document.getElementById('winRate').textContent = stats.winRate || 'N/A';
+  document.getElementById('hltvRating').textContent = stats.rating || 'N/A';
 
   dashboard.style.display = 'flex';
 }
