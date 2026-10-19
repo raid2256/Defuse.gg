@@ -3,6 +3,7 @@
   "routes": [
     { "src": "/api/upload-stats", "dest": "/api/upload-stats.js" },
     { "src": "/api/get-stats", "dest": "/api/get-stats.js" },
+    { "src": "/api/auth-steam", "dest": "/api/auth-steam.js" },
     { "src": "/(.*)", "dest": "/public/$1" }
   ]
 }
