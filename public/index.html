@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CS2 Casual & Non-Prime Global Stat Tracker</title>
+  <title>DEFUSE.GG - CS2 Casual & Non-Prime Stat Tracker</title>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -11,20 +11,27 @@
 
   <header class="navbar">
     <div class="logo">
-      <span class="logo-accent">CS2</span> STAT TRACKER <span class="badge">NON-PRIME EDITION</span>
+      <span class="logo-accent">DEFUSE</span>.GG <span class="badge">CASUAL & NON-PRIME</span>
     </div>
-    <nav>
-      <button class="nav-btn active" onclick="switchTab('leaderboard')">Global Leaderboard</button>
-      <button class="nav-btn" onclick="switchTab('instructions')">How to Setup</button>
-    </nav>
+    <div class="nav-right">
+      <button class="nav-btn active" onclick="switchTab('leaderboard')">Leaderboard</button>
+      <button class="nav-btn" onclick="switchTab('instructions')">1-Click Setup</button>
+      <a href="/api/auth-steam?action=login" id="steamBtn" class="steam-login-btn">
+        <img src="https://community.cloudflare.steamstatic.com/public/images/signinthroughsteam/sits_01.png" alt="Sign in through Steam">
+      </a>
+    </div>
   </header>
 
   <main class="container">
-
     <section id="leaderboard" class="tab-content active">
+      
+      <div id="claimedBanner" class="claimed-banner" style="display: none;">
+        <span>🎮 Welcome back! Your Steam ID <strong id="userSteamId"></strong> is verified and claimed.</span>
+      </div>
+
       <div class="hero">
-        <h1>GLOBAL CASUAL MATCH LEADERBOARD</h1>
-        <p>Real-time stats tracked across community, non-Prime, and casual servers.</p>
+        <h1>GLOBAL CASUAL STAT TRACKER</h1>
+        <p>Real-time match tracking, headshot analytics, and profile claiming for CS2 casual players.</p>
       </div>
 
       <div class="stats-overview">
@@ -55,13 +62,14 @@
               <th>Player Name</th>
               <th>Kills</th>
               <th>Deaths</th>
-              <th>Assists</th>
               <th>K/D Ratio</th>
+              <th>HS %</th>
               <th>Score</th>
+              <th>Match History</th>
             </tr>
           </thead>
           <tbody id="leaderboardBody">
-            <tr><td colspan="7" class="loading">Loading Global Leaderboard Data...</td></tr>
+            <tr><td colspan="8" class="loading">Loading Global Leaderboard Data...</td></tr>
           </tbody>
         </table>
       </div>
@@ -69,37 +77,42 @@
 
     <section id="instructions" class="tab-content">
       <div class="hero">
-        <h1>HOW TO TRACK YOUR CS2 STATS</h1>
-        <p>Follow these 3 easy steps to connect your CS2 game client to the global leaderboard.</p>
+        <h1>1-CLICK TRACKER INSTALLATION</h1>
+        <p>No Python required. Download the auto-installer file and launch CS2.</p>
       </div>
 
       <div class="steps-grid">
         <div class="step-card">
           <div class="step-num">01</div>
-          <h3>Install CS2 GSI Config</h3>
-          <p>Place <code>gamestate_integration_tracker.cfg</code> inside your CS2 cfg directory:</p>
-          <pre><code>C:\Program Files (x86)\Steam\steamapps\common\Counter-Strike Global Offensive\game\csgo\cfg\</code></pre>
+          <h3>Download Auto-Installer</h3>
+          <p>Download <code>install_tracker.bat</code> onto your PC.</p>
         </div>
 
         <div class="step-card">
           <div class="step-num">02</div>
-          <h3>Run Local Bridge Script</h3>
-          <p>Ensure Python 3 is installed, then run the background bridge script while playing:</p>
-          <pre><code>python tracker_bridge.py</code></pre>
+          <h3>Run File Once</h3>
+          <p>Double-click the installer. It automatically detects your CS2 installation path and creates the GSI integration file.</p>
         </div>
 
         <div class="step-card">
           <div class="step-num">03</div>
-          <h3>Play CS2 & Rank Up!</h3>
-          <p>Launch CS2 and join any Casual, Deathmatch, or Community server. Stats automatically sync every round!</p>
+          <h3>Play CS2!</h3>
+          <p>Boot up CS2 and play any casual or non-Prime match. Stats sync to this global leaderboard automatically!</p>
         </div>
       </div>
     </section>
-
   </main>
 
+  <div id="historyModal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn" onclick="closeModal()">&times;</span>
+      <h2 id="modalPlayerName">Match History</h2>
+      <div id="modalHistoryContent" class="history-list"></div>
+    </div>
+  </div>
+
   <footer>
-    <p>CS2 Casual Stat Tracker &copy; 2026 | Built for Non-Prime & Casual CS2 Gamers</p>
+    <p>DEFUSE.GG &copy; 2026 | Built for Casual & Non-Prime CS2 Gamers</p>
   </footer>
 
   <script src="app.js"></script>
