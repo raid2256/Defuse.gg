@@ -3,40 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DEFUSE.GG — CS2 Steam Stat Lookup</title>
+  <title>DEFUSE.GG — CS2 Stat Lookup</title>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-  <!-- HEADER NAVBAR -->
   <header class="navbar">
     <div class="nav-container">
       <div class="logo">
         <span class="logo-brand">DEFUSE</span><span class="logo-dot">.GG</span>
       </div>
-      <span class="badge">STEAM API EDITION</span>
+      <span class="badge">KEYLESS LOOKUP</span>
     </div>
   </header>
 
   <main class="container">
 
-    <!-- SEARCH HERO -->
     <section class="hero">
       <h1>LOOKUP ANY CS2 PLAYER</h1>
-      <p>Enter any public Steam ID or Steam profile link to inspect overall kills, K/D ratio, headshot percentage, and weapon stats.</p>
+      <p>Enter any 17-digit SteamID64 to inspect public kills, K/D ratio, headshot %, and HLTV rating.</p>
       
       <div class="search-box">
-        <input type="text" id="steamInput" placeholder="Paste SteamID64 or profile URL (e.g. https://steamcommunity.com/id/s1mple)" onkeypress="handleKeyPress(event)">
+        <input type="text" id="steamInput" placeholder="Enter SteamID64 (e.g. 76561197960287930)" onkeypress="handleKeyPress(event)">
         <button class="btn-search" onclick="fetchPlayerStats()">Inspect Player</button>
       </div>
       <div id="errorMessage" class="error-banner" style="display: none;"></div>
     </section>
 
-    <!-- PLAYER PROFILE DASHBOARD (Hidden until searched) -->
     <section id="dashboard" class="dashboard-grid" style="display: none;">
       
-      <!-- PROFILE HEADER CARD -->
       <div class="profile-card">
         <img id="playerAvatar" src="" alt="Player Avatar" class="player-avatar">
         <div class="player-info">
@@ -46,7 +42,6 @@
         </div>
       </div>
 
-      <!-- MAIN METRICS -->
       <div class="metrics-grid">
         <div class="metric-card">
           <span class="metric-label">K/D RATIO</span>
@@ -61,23 +56,13 @@
           <span class="metric-value" id="totalKills">-</span>
         </div>
         <div class="metric-card">
-          <span class="metric-label">TOTAL DEATHS</span>
-          <span class="metric-value" id="totalDeaths">-</span>
+          <span class="metric-label">WIN RATE</span>
+          <span class="metric-value" id="winRate">-</span>
         </div>
         <div class="metric-card">
-          <span class="metric-label">HOURS PLAYED</span>
-          <span class="metric-value" id="hoursPlayed">-</span>
+          <span class="metric-label">HLTV RATING</span>
+          <span class="metric-value" id="hltvRating">-</span>
         </div>
-        <div class="metric-card">
-          <span class="metric-label">TOTAL MVPs</span>
-          <span class="metric-value" id="totalMvps">-</span>
-        </div>
-      </div>
-
-      <!-- WEAPON KILLS BREAKDOWN -->
-      <div class="weapons-section">
-        <h3>LIFETIME WEAPON FRAGS</h3>
-        <div id="weaponsGrid" class="weapons-grid"></div>
       </div>
 
     </section>
@@ -85,7 +70,7 @@
   </main>
 
   <footer>
-    <p>DEFUSE.GG &copy; 2026 | Powered by Valve Steam Web API</p>
+    <p>DEFUSE.GG &copy; 2026 | Public Index Lookup</p>
   </footer>
 
   <script src="app.js"></script>
