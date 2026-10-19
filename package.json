@@ -1,8 +1,8 @@
 {
-  "name": "cs2-global-stat-tracker",
-  "version": "1.0.0",
+  "name": "defuse-gg-cs2-stats",
+  "version": "2.0.0",
   "private": true,
-  "description": "Global stat tracker for casual and non-Prime CS2 players deployed on Vercel.",
+  "description": "Steam Web API-based Counter-Strike 2 Stat Tracker",
   "scripts": {
     "start": "serve public"
   }
